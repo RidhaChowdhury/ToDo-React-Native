@@ -2,10 +2,12 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View , SafeAreaView, Keyboard, ScrollView} from 'react-native';
 import Task from './components/Task';
+import FinishedTask from './components/FinishedTask';
 
 export default function App() {
   const [task, setTask] = React.useState();
   const [taskList, setTaskList] = React.useState([]);
+  const [finishedTasks, setFinishedTasks] = React.useState([]);
 
   const handleAddTask = () => {
     Keyboard.dismiss();
@@ -14,9 +16,34 @@ export default function App() {
   }
   
   const completeTask = (index) => {
-    let itemsCopy = [...taskList];
-    itemsCopy.splice(index, 1);
-    setTaskList(itemsCopy);
+    let taskListCopy = [...taskList];
+    let finishedListCopy = [...finishedTasks];
+
+    finishedListCopy.push(taskList[index]);
+    taskListCopy.splice(index, 1);
+    
+    setTaskList(taskListCopy);
+    setFinishedTasks(finishedListCopy);
+  }
+
+  const restoreTask = (index) => {
+    console.log("restoring " + index);
+    let taskListCopy = [...taskList];
+    let finishedListCopy = [...finishedTasks];
+
+    taskListCopy.push(finishedListCopy[index]);
+    finishedListCopy.splice(index, 1);
+    
+    setTaskList(taskListCopy);
+    setFinishedTasks(finishedListCopy);
+  }
+
+  const deleteTask = (index) => {
+    let finishedListCopy = [...finishedTasks];
+    
+    finishedListCopy.splice(index, 1);
+    
+    setFinishedTasks(finishedListCopy);
   }
 
   const reorder = (index, direction) => {
@@ -39,7 +66,7 @@ export default function App() {
   return (
     <SafeAreaView style = {styles.container}>
       {/*Todays Tasks*/} 
-      <Text style = {styles.sectionTitle}>Todays Tasks</Text>
+      
       <ScrollView 
       contentContainerStyle={{
         flexGrow: 1
@@ -47,6 +74,7 @@ export default function App() {
       keyboardShouldPersistTaps='handled'
       style = {styles.scrollView}>
         <View style = {styles.taskWrapper}>
+          <Text style = {styles.sectionTitle}>Todays Tasks</Text>
           <View style = {styles.items}>
             {
               taskList.map((item, index) => {
@@ -62,7 +90,32 @@ export default function App() {
               })
             }
           </View>
+
+          <Text style = {styles.sectionTitle}>Finished Tasks</Text>
+          <View style = {styles.items}>
+            {
+              finishedTasks.map((item, index) => {
+                return (
+                    <FinishedTask
+                      key = {index} 
+                      text = {item}
+                      onCheck = {() => {
+                        console.log("monket");
+                        restoreTask(index);
+                      }}
+                      onDelete = {() => {
+                        console.log("hkjh");
+                        deleteTask(index);
+                      }}
+                    />
+                )
+              })
+            }
+          </View>
+
         </View>
+
+        
       </ScrollView>
 
       {/*Add task*/}
@@ -70,11 +123,11 @@ export default function App() {
       behavior = {Platform.OS === "ios" ? "padding" : "height"}
       style = {styles.writeTaskWrapper}>
         <TextInput 
-        style = {styles.inputTask} 
-        placeholder = {"Write a task"} 
-        placeholderTextColor = {appColors.white}
-        value = {task}
-        onChangeText = {text => setTask(text)}/> 
+          style = {styles.inputTask} 
+          placeholder = {"Write a task"} 
+          placeholderTextColor = {appColors.white}
+          value = {task}
+          onChangeText = {text => setTask(text)}/> 
         
         <TouchableOpacity onPress = {handleAddTask}>
           <View style = {styles.addWrapper}>
@@ -96,7 +149,7 @@ const appColors = {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 80,
+    paddingTop: 40,
     flex: 1,
     backgroundColor: appColors.grey,
   },
@@ -109,10 +162,9 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 24,
-    paddingLeft: 20,
-    paddingBottom: 10,
     fontWeight: 'bold',
-    color: appColors.white
+    color: appColors.white,
+    marginTop: 40
   },
   items: {
     paddingTop: 20

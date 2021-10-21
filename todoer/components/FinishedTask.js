@@ -1,26 +1,26 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 
-const Task = (props) => {
-    const [finished, setFinished] = React.useState("-");
+const FinishedTask = (props) => {
+    
     return (
         <View style = {styles.item}>
             <View style = {styles.itemLeft}>
                 <TouchableOpacity onPress = {props.onCheck}>
-                    <View style = {styles.square}/>
+                    <View style = {styles.square}>
+                        <Image style = {styles.check} source={require('../assets/check.png')}/>
+                    </View>
                 </TouchableOpacity>
                 <Text style = {styles.itemText}>{props.text}</Text>
             </View>
-            <View style = {styles.reorderArrows}>
-                <TouchableOpacity onPress = {props.upArrow}>
-                    <Image style = {styles.upArrow} source={require('../assets/arrow.png')} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress = {props.downArrow}>
-                    <Image style = {styles.downArrow} source={require('../assets/arrow.png')} />
-                </TouchableOpacity>
-            </View>
+            <TouchableOpacity onPress = {props.onDelete}>
+                <View style = {styles.trashWrapper}>
+                    <Image style = {styles.trash} source = {require('../assets/trash.png')}/>
+                </View>
+            </TouchableOpacity>
         </View>
     )
+
 }
 
 const styles = StyleSheet.create({
@@ -35,7 +35,9 @@ const styles = StyleSheet.create({
     },
     itemText: {
         color: '#E8EAED',
-        maxWidth: '80%'
+        maxWidth: '80%',
+        textDecorationLine: 'line-through', 
+        textDecorationStyle: 'solid'
     },
     itemLeft: {
         flexDirection: 'row',
@@ -43,39 +45,37 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap'
     },
     square: {
-        width:24,
-        height:24,
+        width:25,
+        height:25,
         backgroundColor: '#55bcf6',
         opacity: 0.4,
         borderRadius:5,
-        marginRight: 15
+        marginRight: 15,
+        alignItems: 'center',
+        justifyContent:'center'
     },
-    circular: {
-        width: 24,
-        height: 12,
-        borderColor: '#55BCF6',
-        borderWidth: 2,
-        borderRadius: 5,
-        flexDirection: 'row'
+    trashWrapper: {
+        width:25,
+        height:25,
+        backgroundColor: '#55bcf6',
+        opacity: 0.4,
+        borderRadius:5,
+        alignItems: 'center',
+        justifyContent:'center'
     },
     symbol: {
         textAlign: 'center',
         textAlignVertical: 'top',
         fontSize: 24,
     },
-    reorderArrows: {
-        flexDirection: 'row'
-    },
-    upArrow: {
+    check: {
         aspectRatio: 1,
-        height: 25
+        flex: 0.8,
     },
-    downArrow: {
+    trash: {
         aspectRatio: 1,
-        height: 25,
-        transform: [{rotate: '180deg'}],
-        marginLeft: 5
+        flex: 0.8,
     }
 });
 
-export default Task;
+export default FinishedTask;
