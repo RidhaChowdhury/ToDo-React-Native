@@ -1,14 +1,26 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 
 const Task = (props) => {
+    const [finished, setFinished] = React.useState("-");
     return (
         <View style = {styles.item}>
             <View style = {styles.itemLeft}>
-                <View style = {styles.square}/>
+                <TouchableOpacity onPress = {props.onCheck}>
+                    <View style = {styles.square}>
+                        <Text style = {styles.symbol}>{finished}</Text>
+                    </View>
+                </TouchableOpacity>
                 <Text style = {styles.itemText}>{props.text}</Text>
             </View>
-            <View style = {styles.circular}></View>
+            <View style = {styles.reorderArrows}>
+                <TouchableOpacity onPress = {props.upArrow}>
+                    <Image style = {styles.upArrow} source={require('../assets/arrow.png')} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress = {props.downArrow}>
+                    <Image style = {styles.downArrow} source={require('../assets/arrow.png')} />
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
@@ -41,11 +53,31 @@ const styles = StyleSheet.create({
         marginRight: 15
     },
     circular: {
-        width: 12,
+        width: 24,
         height: 12,
         borderColor: '#55BCF6',
         borderWidth: 2,
         borderRadius: 5,
+        flexDirection: 'row'
+    },
+    symbol: {
+        textAlign: 'center',
+        textAlignVertical: 'top',
+        fontSize: 24,
+
+    },
+    reorderArrows: {
+        flexDirection: 'row'
+    },
+    upArrow: {
+        aspectRatio: 1,
+        height: 25
+    },
+    downArrow: {
+        aspectRatio: 1,
+        height: 25,
+        transform: [{rotate: '180deg'}],
+        marginLeft: 5
     }
 });
 

@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View , SafeAreaView, Keyboard} from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View , SafeAreaView, Keyboard, ScrollView} from 'react-native';
 import Task from './components/Task';
 
 export default function App() {
@@ -12,30 +12,58 @@ export default function App() {
     setTaskList([...taskList, task]);
     setTask(null);
   }
-
+  
   const completeTask = (index) => {
     let itemsCopy = [...taskList];
     itemsCopy.splice(index, 1);
     setTaskList(itemsCopy);
   }
 
+  const reorder = (index, direction) => {
+    let itemsCopy = [...taskList];
+
+    if(index + direction < 0 || index + direction > itemsCopy.length)
+      return;
+
+    var new_index = index + direction;
+    if (new_index >= itemsCopy.length) {
+      var k = new_index - itemsCopy.length + 1;
+      while (k--) {
+          itemsCopy.push(undefined);
+      }
+    }
+    itemsCopy.splice(new_index, 0, itemsCopy.splice(index, 1)[0]);
+    setTaskList(itemsCopy);
+  }
+
   return (
     <SafeAreaView style = {styles.container}>
-      {/*Todays Tasks*/}
-      <View style = {styles.taskWrapper}>
-        <Text style = {styles.sectionTitle}>Todays Tasks</Text>
-        <View style = {styles.items}>
-          {
-            taskList.map((item, index) => {
-              return (
-                <TouchableOpacity key = {index} onPress = {() => completeTask(index)}>
-                  <Task text = {item}/>
-                </TouchableOpacity>
-              )
-            })
-          }
+      {/*Todays Tasks*/} 
+      <Text style = {styles.sectionTitle}>Todays Tasks</Text>
+      <ScrollView 
+      contentContainerStyle={{
+        flexGrow: 1
+      }}
+      keyboardShouldPersistTaps='handled'
+      style = {styles.scrollView}>
+        <View style = {styles.taskWrapper}>
+          <View style = {styles.items}>
+            {
+              taskList.map((item, index) => {
+                return (
+                    <Task
+                      key = {index} 
+                      text = {item}
+                      onCheck = {() => completeTask(index)}
+                      upArrow = {() => reorder(index, -1)}
+                      downArrow = {() => reorder(index, 1)}
+                    />
+                )
+              })
+            }
+          </View>
         </View>
-      </View>
+      </ScrollView>
 
       {/*Add task*/}
       <KeyboardAvoidingView
@@ -68,15 +96,21 @@ const appColors = {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 80,
     flex: 1,
     backgroundColor: appColors.grey,
   },
+  scrollView: {
+    marginBottom: 80
+  },
   taskWrapper: {
-    marginTop: 80,
+    marginTop: 0,
     marginHorizontal:20 
   },
   sectionTitle: {
     fontSize: 24,
+    paddingLeft: 20,
+    paddingBottom: 10,
     fontWeight: 'bold',
     color: appColors.white
   },
