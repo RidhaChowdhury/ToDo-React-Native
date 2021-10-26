@@ -1,14 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View , SafeAreaView, Keyboard, ScrollView} from 'react-native';
 import Task from './components/Task';
 import FinishedTask from './components/FinishedTask';
+import appColors from './assets/colors';
 
 export default function App() {
-  const [task, setTask] = React.useState();
-  const [taskList, setTaskList] = React.useState([]);
-  const [finishedTasks, setFinishedTasks] = React.useState([]);
+  const [task, setTask] = useState();
+  const [taskList, setTaskList] = useState([]);
+  const [finishedTasks, setFinishedTasks] = useState([]);
 
+
+  
   const handleAddTask = () => {
     Keyboard.dismiss();
     setTaskList([...taskList, task]);
@@ -27,7 +30,6 @@ export default function App() {
   }
 
   const restoreTask = (index) => {
-    console.log("restoring " + index);
     let taskListCopy = [...taskList];
     let finishedListCopy = [...finishedTasks];
 
@@ -48,7 +50,7 @@ export default function App() {
 
   const reorder = (index, direction) => {
     let itemsCopy = [...taskList];
-
+    
     if(index + direction < 0 || index + direction > itemsCopy.length)
       return;
 
@@ -100,11 +102,9 @@ export default function App() {
                       key = {index} 
                       text = {item}
                       onCheck = {() => {
-                        console.log("monket");
                         restoreTask(index);
                       }}
                       onDelete = {() => {
-                        console.log("hkjh");
                         deleteTask(index);
                       }}
                     />
@@ -112,7 +112,7 @@ export default function App() {
               })
             }
           </View>
-
+ 
         </View>
 
         
@@ -140,12 +140,7 @@ export default function App() {
   );
 }
 
-const appColors = {
-  'grey': '#262a2e',
-  'white': '#e8eaed',
-  'black': '#181a1c',
-  'trueBlack': '#121314'
-}
+
 
 const styles = StyleSheet.create({
   container: {
